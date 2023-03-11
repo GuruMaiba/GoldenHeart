@@ -1,0 +1,47 @@
+﻿@model ICollection<GoldenHeart.Models.MessageStaff>
+
+@{
+    ViewBag.Title = "Сообщения для персонала";
+    ViewBag.viewSubmenu = true;
+}
+
+@section Modal {
+	<div class="go-message" ng-controller="messageCtrl">
+        <div class="sing-close" onclick="ClosedMessage();"></div>
+        <div class="go-message-fon">
+            <h3>Сообщения</h3>
+            <div class="go-message-item">
+                <p>Ваше сообщение:</p>
+                <textarea ng-model="message"  placeholder="Введите сообщение"></textarea>
+            </div>
+            <div class="go-message-last">
+                <button onclick="SetMessage()" disabled>Ответить</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="issues-personal">
+    <div class="issues-personal-fon">
+        <div class="message-admin">
+            <button onclick="ShowMessage()">Сука</button>
+        </div>
+        @if (Model.Count > 0)
+        {
+            foreach (var mess in Model)
+            {
+                <div class="issues-personal-item">
+                    <h3>Администратор</h3>
+                    <span>@mess.DateCreate.ToString("[ dd.MM.yyyy | HH:mm ]")</span>
+                    <p>@Html.Raw(mess.Text)</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="issues-personal-item">
+                <h3>Оповестите персонал о событиях, происходящих в "Золотом Сердце"</h3>
+            </div>
+        }
+    </div>
+</div>

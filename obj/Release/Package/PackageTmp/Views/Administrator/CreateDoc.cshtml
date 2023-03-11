@@ -1,0 +1,45 @@
+﻿@model GoldenHeart.Models.CreateDoc
+@{
+    ViewBag.Title = "Создание аккаунта врача";
+    ViewBag.viewSubmenu = true;
+}
+
+<div class="admin-ls">
+    <div class="hospital-fon-user-fon">
+        <div class="hospital-fon-user" ng-controller="addDoctorCtrl">
+            @using (Html.BeginForm("CreateDoc", "Administrator", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="hospital-fon-user-left"><input type="file" name="ava" accept="image/png,image/jpg"><img src="~/img/add-doctor.png" /></div>
+                <div class="hospital-fon-user-right">
+                    <div class="hospital-fon-user-right-name">
+                        <input type="text" ng-model="firstname" name="FirstName" placeholder="Фамилия" step="35"  start-width="180"/><br><input ng-model="name" type="text" name="Name" placeholder="Имя"  start-width="70" step="35"/><input ng-model="lastname" type="text" name="LastName" placeholder="Отчество"  start-width="170" step="35"/>
+                        <div class="hospital-fon-user-right-position"><input ng-model="position" type="text" name="Position" placeholder="Должность" start-width="180"  step="20"/></div>
+                    </div>
+                    <div class="hospital-fon-user-right-item"><p>Дата рождения:<input class="admin-user-input-one" ng-model="birthday" type="text" name="Birthday" placeholder="дд.мм.гггг"  start-width="152" step="10" data-mask="00.00.0000"/></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Образование:<input class="admin-user-input-two" type="text" ng-model="education" name="Education" placeholder="Степен, ВУЗ. специальность" start-width="257"  step="10"/></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Сертификат:<input class="admin-user-input-three" type="text" ng-model="certificate" name="Certificate" placeholder="Название сертификата" start-width="217" step="10"/></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Начал деятельность в учреждении:<input class="admin-user-input-one" ng-model="institutionworks" type="text" name="InstitutionWorks" placeholder="дд.мм.гггг" data-mask="00.00.0000"/></p></div>
+                    @Html.ValidationMessageFor(model => model.Phone, "Такой телефон уже есть в Базе данных", new { @class = "hospital-fon-user-right-item-error" })
+                    <div class="hospital-fon-user-right-item"><p>Телефон:<input class="admin-user-input-four" type="text" ng-model="phone" name="Phone" placeholder="8(xxx) xx-xx-xx"  data-mask="8(000) 000-00-00"/></p></div>
+                    @Html.ValidationMessageFor(model => model.Email, "Такой почтовый адресс уже существует в Базе данных", new { @class = "hospital-fon-user-right-item-error" })
+                    <div class="hospital-fon-user-right-item"><p>E-mail:<input class="admin-user-input-four" type="email" ng-model="email" name="Email" placeholder="&#064;" /></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Пароль:<input class="admin-user-input-four" ng-model="password" type="password" name="Pass" placeholder="пароль" /></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Повторите пароль:<input class="admin-user-input-four" ng-model="password_repeat" type="password" name="PassConfirm" placeholder="пароль" /></p></div>
+                    <div class="hospital-fon-user-right-item">
+                        <p>Услуга:
+                            <select name="ServiceId" ng-model="service">
+                                <option selected value="0">Выберите услугу</option>
+                                @foreach (var service in ViewBag.Services)
+                                { <option value="@service.Id">@service.Name</option> }
+                            </select>
+                        </p>
+                    </div>
+                    <div class="admin-add-doctor-fon"><button type="reset">Отменить</button><button type="submit" disabled>Сохранить</button></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@*@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+@Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })*@

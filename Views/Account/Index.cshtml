@@ -1,0 +1,37 @@
+﻿@using GoldenHeart.Models
+@model UserView
+@{
+    ViewBag.Title = "Личный кабинет";
+}
+
+@Html.Partial("_moreMenu")
+
+<div class="ls-center">
+
+    <div class="ls-center-fon">
+        <h2>личная информация пользователя</h2>
+        <div class="ls-center-info">
+
+            <div class="ls-center-info-item">
+                <div class="ls-center-info-item-in"><p>ФИО:</p><span>@Model.Name</span></div>
+                <div class="ls-center-info-item-in"><p>Контактный номер:</p><span>@Model.Phone</span></div>
+            </div>
+            <div class="ls-center-info-item ls-center-info-item-l">
+                @if (User.Identity.GetUserRole() == "Human")
+                {<div class="ls-center-info-item-in"><p>Почта:</p><span>@Model.Email</span></div>}
+                @if (User.Identity.GetUserRole() == "Doc")
+                {<div class="ls-center-info-item-in"><p>Должность:</p><span>Терапевт</span></div>}
+                <div class="ls-center-info-item-in"><p>Дата рождения:</p><span>@Model.Birthday.ToString("dd.MM.yyyy")</span></div>
+            </div>
+            <div class="ls-edit"><button>редактировать</button></div>
+        </div>
+
+        <div class="ls-center-change">
+            <h3>изменить пароль</h3>
+            @if (User.Identity.GetUserRole() == "Doc")
+            {<p>Для внесения изменении в личную информацию обратитесь к администратору</p>}
+        </div>
+    </div>
+
+</div>
+

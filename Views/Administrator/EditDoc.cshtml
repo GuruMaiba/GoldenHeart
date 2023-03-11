@@ -1,0 +1,57 @@
+﻿@model GoldenHeart.Models.User
+@{
+    ViewBag.Title = "Редактирование профиля";
+}
+
+<div class="admin-ls">
+    <div class="hospital-fon-user-fon">
+        <div class="hospital-fon-user">
+            @using (Html.BeginForm("EditDoc", "Administrator", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("id", Model.Id)
+                <div class="hospital-fon-user-left"><input type="file" name="ava" accept="image/png,image/jpg"><img src="~/img/avatars/@Model.Avatar" /></div>
+                <div class="hospital-fon-user-right">
+                    <div class="hospital-fon-user-right-name">
+                        <input type="text" name="FirstName" placeholder="Фамилия" value="@Model.FirstName" /><br>
+                        <input type="text" name="Name" placeholder="Имя" value="@Model.Name" />
+                        <input type="text" name="LastName" placeholder="Отчество" value="@Model.LastName" />
+                        <div class="hospital-fon-user-right-position"><input type="text" name="Position" placeholder="Должность" value="@Model.Position" /></div>
+                    </div>
+                    <div class="hospital-fon-user-right-item"><p>Дата рождения:<input class="admin-user-input-one" type="text" name="Birthday" placeholder="дд.мм.гггг" value="@Model.Birthday" /></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Образование:<input class="admin-user-input-two" type="text" name="Education" placeholder="Степен, ВУЗ. специальность" value="@Model.Education" /></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Сертификат:<input class="admin-user-input-three" type="text" name="Certificate" placeholder="Название сертификата" value="@Model.Certificate" /></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Начал деятельность в учреждении:<input class="admin-user-input-one" type="text" name="InstitutionWorks" placeholder="дд.мм.гггг" value="@Model.InstitutionWorks" /></p></div>
+                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "hospital-fon-user-right-item-error" })
+                    <div class="hospital-fon-user-right-item"><p>Телефон:<input class="admin-user-input-four" type="text" name="Phone" placeholder="8(xxx) xx-xx-xx" value="@Model.Phone" /></p></div>
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "hospital-fon-user-right-item-error" })
+                    <div class="hospital-fon-user-right-item"><p>E-mail:<input class="admin-user-input-four" type="email" name="Email" placeholder="&#064;" value="@Model.Email" /></p></div>
+                    @Html.ValidationMessageFor(model => model.HashPassword, "", new { @class = "hospital-fon-user-right-item-error" })
+                    <div class="hospital-fon-user-right-item"><p>Пароль:<input class="admin-user-input-four" type="password" name="Pass" placeholder="Пароль" /></p></div>
+                    <div class="hospital-fon-user-right-item"><p>Повторите пароль:<input class="admin-user-input-four" type="password" name="PassConfirm" placeholder="Подтверждение пароля" /></p></div>
+                    <div class="hospital-fon-user-right-item">
+                        <p>
+                            Услуга:
+                            <select name="ServiceId">
+                                @foreach (var service in ViewBag.Services)
+                                {
+                                    if (Model.Service.Id == service.Id)
+                                    {<option select value="@service.Id">@service.Name</option>}
+                                }
+
+                                <option value="0">Отвязать от услуги</option>
+
+                                @foreach (var service in ViewBag.Services)
+                                {
+                                    if (Model.Service.Id != service.Id)
+                                    {<option value="@service.Id">@service.Name</option>}
+                                }
+                            </select>
+                        </p>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "hospital-fon-user-right-item-error" })
+                    <div class="admin-add-doctor-fon"><button type="reset">Отменить</button><button type="submit">Сохранить</button></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

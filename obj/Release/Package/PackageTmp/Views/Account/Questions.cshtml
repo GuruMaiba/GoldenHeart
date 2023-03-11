@@ -1,0 +1,104 @@
+﻿@using GoldenHeart.Models
+@model ICollection<Question>
+@{
+    ViewBag.Title = "Вопросы";
+    ViewBag.viewSubmenu = true;
+}
+
+@section Modal {
+    <div class="go-issues">
+        <div class="sing-close" onclick="ClosedIssues();"></div>
+        <div class="go-issues-fon">
+            <input id="QuestionId" type="hidden" name="QuestionId" />
+            <h3>Ответить на вопрос</h3>
+            <div class="go-issues-item">
+                <p>Ваш ответ:</p>
+                <textarea ng-model="question" placeholder="Введите вопрос" id="ReplyText"></textarea>
+            </div>
+            <div class="go-issues-last">
+                <button class="btnReply">Ответить</button>
+            </div>
+        </div>
+    </div>
+}
+
+@*<div class="search question-doc-two">
+    <div class="search-fon">
+        <input type="search" placeholder="Поиск ответа ( Ваше имя или часть вопроса )" /> <div class="search-btn-fon"><span class="search-go"></span><span class="search-border"></span><span class="search-clear"></span></div>
+    </div>
+</div>*@
+
+<div class="question">
+    <div class="question-fon">
+        @if (Model.Count() > 0)
+        {
+            foreach (var Question in Model)
+            {
+                if (Question.HiddenDocs.FirstOrDefault(d => d.Id == User.Identity.GetUserId<int>()) == null)
+                {
+                    <div class="question-item-fon" id="question-@Question.Id">
+                        <div class="question-item">
+                            <div class="question-item-left">
+                                <p>@Question.DateCreate.ToString("dd.MM.yyyy")</p>
+                                <p class="question-p-last">@Question.DateCreate.ToString("HH:mm")</p>
+                                <h3>Ожидает ответа</h3>
+                            </div>
+                            <div class="question-item-right">
+                                <h3>@Question.Name:</h3>
+                                <p>@Question.Text</p>
+                                <button questionid="@Question.Id">Ответить</button>
+                            </div>
+                        </div>
+                        <div class="question-item-action"><p questionid="@Question.Id">Скрыть вопрос</p></div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <h4>Новых вопросов нет...</h4>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(".question-item-action p").click(function () {
+            var id = $(this).attr("questionid");
+
+            $.ajax({
+                url: "/Account/HiddenQuestion",
+                method: "POST",
+                data: {
+                    id: id
+                },
+                success: function () {
+                    $("#question-" + id).remove();
+                }
+            });
+        });
+
+        $(".question-item-right button").click(function () {
+            $("#QuestionId").val($(this).attr("questionid"));
+            $(".go-issues").css("display", "block");
+        });
+
+        $(".btnReply").click(function () {
+            var id = $("#QuestionId").val(),
+                text = $("#ReplyText").val();
+
+            $.ajax({
+                url: "/Account/Reply",
+                method: "POST",
+                data: {
+                    Id: id,
+                    Text: text
+                },
+                success: function () {
+                    $(".go-issues").css("display", "none");
+                    $("#question-" + id).remove();
+                }
+            });
+        });
+    </script>
+}

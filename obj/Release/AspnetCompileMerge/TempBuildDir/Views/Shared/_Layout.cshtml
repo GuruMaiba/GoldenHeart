@@ -1,0 +1,243 @@
+﻿@using GoldenHeart.Models
+<!DOCTYPE html>
+<html ng-app="studyModule">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=WINDOWS-1251"/>
+    <meta charset="windows-1251" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Days+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Days+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    @Styles.Render("~/Content/css")
+
+</head>
+<body>
+    @RenderSection("Modal", required: false)
+	<div class="mask"></div>
+    <div class="sing" ng-controller="singCtrl">
+        <div class="sing-close" onclick="ClosedSing();"></div>
+        <div class="sing-fon">
+            <h3>авторизация</h3>
+            @*<input type="hidden" name="Phone" />
+            <input type="hidden" name="Email" />*@
+            <div class="sing-item">
+                <p>Ваш почтовый ящик:</p>
+                <input ng-model="email" type="email" />
+            </div>
+            <div class="sing-item">
+                <p>Пороль:</p>
+                <input ng-model="password" type="password" ng-keyup="EnterSing($event)" /><span onclick="TogglePassword(this)"></span>
+            </div>
+            <div class="sing-down">
+            <span></span>
+            <button ng-click="sing()" disabled>войти</button></div>
+        </div>
+    </div>
+    <div class="main-left" ng-controller="leftmenuCtrl">
+        <div class="main-left-fon">
+            <div class="main-left-fon-close" onclick="ClosedMenuLeft()">
+                <img src="~/img/closed_blue.png">
+            </div>
+            <div class="main-left-fon-item" ng-repeat="item in menus track by $index">
+                <a href="{{item.a}}" ng-if="$index < 3">{{item.txt}}</a>
+                <a href="javascript: return false;" onclick="Sing()" ng-if="$index == 3">{{item.txt}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="blur-fon">
+        <div @if (ViewBag.page == "Main") {<text>class="main-index"</text>}>
+            <div class="up" ng-controller="menuCtrl">
+                <div class="up-fon">
+                    <div class="up-left">
+                        <div class="up-left-logo">
+                            <div class="up-left-logo-img" Goto('/Home/index')> <img src="~/img/logo.png" /></div> <div class="up-left-logo-text">
+                                <h1>Золотое сердце</h1>
+                                <p>поликлиническое отделение</p>
+                                
+                            </div>
+							<div class="up-left-right" onclick="ShowMenuLeft()"><div class="up-left-right-item"></div><div class="up-left-right-item"></div><div class="up-left-right-item"></div></div>
+                        </div>
+                        <div class="up-left-menu">
+                            <div class="up-left-menu-item" ng-repeat="item in menus track by $index" ng-mouseover="ShowMenu($index,true)" ng-mouseleave="ShowMenu($index,false)">
+                                <a href="{{item.a}}">{{item.txt}}</a>
+                                <div id="patients" class="menu-down" ng-if="$index == 2">
+                                    <div class="menu-down-fon">
+                                        <div class="menu-down-cursore"></div>
+										<a href="{{item.a}}"  ng-repeat="item in menuDown track by $index">
+                                        <div class="menu-down-item">
+                                            <p>{{item.txt}}</p>
+                                            <div class="menu-down-item-line" ng-if="$index < 3"></div>
+                                        </div>
+										</a>
+                                    </div>
+                                </div>
+								
+								<div id="oms" class="menu-down" ng-if="$index == 3">
+                                    <div class="menu-down-fon">
+                                        <div class="menu-down-cursore"></div>
+										<a href="{{item.a}}"  ng-repeat="item in menuDownTwo track by $index">
+                                        <div class="menu-down-item">
+                                            <p>{{item.txt}}</p>
+                                            <div class="menu-down-item-line" ng-if="$index < 3"></div>
+                                        </div>
+										</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="up-right">
+                        <div class="up-right-left">
+                            @if (User.Identity.GetUserRole() == "Admin")
+                            {
+                                <p>Администратор<span></span></p>
+                                <div class="up-right-left-down">
+                                    <div class="up-right-left-down-fon">
+                                        <div class="menu-down-cursore"></div>
+                                        <div class="up-right-left-down-item"><a href="/Administrator"><img src="/img/icon/admin/edit.png" /><p>Время приема</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Administrator/Staff"><img src="/img/icon/admin/user.png" /><p>Персонал</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Administrator/Patients"><img src="/img/icon/admin/bd.png" /><p>База пациентов</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Administrator/MessageForStaff"><img src="/img/icon/admin/info.png" /><p>Сообщ. для персонала</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Account/Logout"><img src="/img/icon/admin/exit.png" /><p>Выйти</p></a></div>
+                                    </div>
+                                </div>
+                            }
+                            else if (User.Identity.GetUserRole() == "Doc")
+                            {
+                                <p>@User.Identity.Name<span></span></p>
+                                <div class="up-right-left-down">
+                                    <div class="up-right-left-down-fon">
+                                        <div class="menu-down-cursore"></div>
+                                        <div class="up-right-left-down-item"><a href="/Home/Doctor/@(User.Identity.GetUserId<int>())"><img src="/img/icon/admin/ls.png" /><p>Личная информация</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Account/Reception"><img src="/img/icon/admin/edit.png" /><p>Записи</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Account/Questions"><img src="/img/icon/admin/quest.png" /><p>Вопросы</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Account/Info"><img src="/img/icon/admin/info.png" /><p>Инф. для персонала</p></a></div>
+                                        <div class="up-right-left-down-item"><a href="/Account/Logout"><img src="/img/icon/admin/exit.png" /><p>Выйти</p></a></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="up-right-txt"><h3>8 (3462) 380-374</h3><p onclick="Goto('/Home/Contact')">Адрес и графики работы</p></div>
+                        <form id="sign">
+                            <input type="hidden" name="phone" />
+                            <input type="hidden" name="email" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            @if (ViewBag.page == "Main")
+            {
+            <div class="main-up">
+                <div class="main-up-fon">
+                    <div class="main-up-h">
+                        <h3>«Золотое Сердце»</h3>
+                        <p>поликлиническое отделение</p>
+                    </div>
+                    <div class="main-up-h-down">
+                        <p>
+                            Некоммерческая организация (НКО), работающая по системе<br>
+                            обязательного  медицинского страхования (ОМС)
+                        </p>
+                        <p>
+                            Мы оказываем помощь больным, проживающим в г. Сургуте и на территории<br>
+                            ХМАО – Югры с заболеваниями онкологии, нервной системы, органов дыхания,<br>
+                            системы кровообращения. Обеспечиваем симптоматическое  лечение<br>
+                            и адекватную обезболивающую терапию, для поддержания качества жизни<br>
+                            в условиях круглосуточного и дневного стационара.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+
+        @if (User.Identity.IsAuthenticated && ViewBag.viewSubmenu == true)
+        {
+            <div class="search">
+                <div class="search-fon-t">
+                    @if (User.Identity.GetUserRole() == "Admin")
+                    {
+                        <div class="ls-fon" ng-controller="lsadminCtrl">
+                            <div class="ls-fon-item" ng-repeat="item in itemsAdmin track by $index" ng-click="updateline($event,item.a)" ng-class="update($index)"><a href="{{item.a}}"><p>{{item.text}}</p><div class="ls-menu-line"></div></a></div>
+                        </div>
+                    }
+                   
+                    else if (User.Identity.GetUserRole() == "Doc")
+                    {
+                        <div class="ls-fon" ng-controller="lsCtrl">
+                            <div class="ls-fon-item" ng-repeat="item in itemsDoc track by $index" ng-click="updateline($event,item.a,@(User.Identity.GetUserId<int>()),$index)" ng-class="update($index)">
+                                <a href="{{item.a}}@(User.Identity.GetUserId<int>())" ng-if="$index == 0"><p>{{item.text}}</p><div class="ls-menu-line"></div></a>
+                                <a href="{{item.a}}" ng-if="$index > 0">
+                                    <p>{{item.text}}
+                                       <span ng-if="$index == 2 && item.count > 0">{{item.count}}</span>
+                                       <span ng-if="$index == 3 && item.count > 0">{{item.count}}</span>
+                                    </p>
+                                    <div class="ls-menu-line"></div>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+         }
+
+        @RenderBody()
+
+        <footer @if (ViewBag.wow == "1") {<text>class="wow fadeInUp"  data-wow-delay="0.2s"</text>} ng-controller="footerCtrl" >
+            <div class="footer-fon">
+                <div class="footer-left">
+                    <button onclick="Goto('/Home/Reception')">Запись на прием</button>
+                    <button>личный кабинет</button>
+                </div>
+                <div class="footer-centr">
+                    <div class="footer-centr-left">
+                        <h3>8 (3462) 380-374</h3>
+                        <p>г. Сургут, проспект Комсомольский 14/5</p>
+                        <p>Перейти на сайт хосписа «Золотое сердце»<br>Перейти на сайт Косметологии «Золотое сердце»</p>
+                    </div>
+                </div>
+                <div class="footer-right"><p ng-repeat="itemr in right">{{itemr}}</p></div>
+                <div class="footer-studio"><img src="~/img/unk.png" /> <p>Сайт разработан <a href="#">Студией UNK<br>Прочитать о сайте</a> </p></div>
+            </div>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/scripts")
+    @RenderSection("Scripts", required: false)
+    <script>
+        $(document).ready(function () {
+            $("#signIn").click(function () {
+                var email = $("#sigEmail").val();
+                var pass = $("#sigPass").val();
+                $.ajax({
+                    url: "/Account/Login",
+                    data: {
+                        Phone: null,
+                        Email: email,
+                        Pass: pass
+                    },
+                    type: "POST",
+                    cach: false,
+                    success: function (data) {
+                        if (data == "1") {
+                            document.location.href = "/Home/Index";
+                        } else {
+                            $("#errorSig").text(data);
+                        }
+                    },
+                    error: function () {
+                        alert("Произошла техническая ошибка, повторите попытку!");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

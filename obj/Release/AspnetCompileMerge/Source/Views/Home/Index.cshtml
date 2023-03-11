@@ -1,0 +1,91 @@
+﻿@using GoldenHeart.Models
+@{
+    ViewBag.Title = "Золотое сердце";
+}
+ <div class="main-center-black">
+<div class="main-center-gradient"></div>
+<div class="main-center">
+	
+    <div class="main-center-fon">
+        <div class="main-center-info" ng-controller="hospitalCtrl">
+            <div class="main-center-info-h"><h3>Поликлиническое<br>отделение</h3></div>
+            <div class="main-center-item" ng-repeat="item in items"><div class="main-center-item-img"> <img src="{{item.img}}" /></div><p>{{item.txt}}</p> </div>
+        </div>
+    </div>
+	</div>
+</div>
+ <div class="main-center-black">
+<div class="main-center-gradient"></div>
+<div class="main-down">
+	
+    <div class="main-center-fon">
+        <div class="main-center-info" ng-controller="hospisCtrl">
+            <div class="main-center-info-h"><h3>Хоспис</h3></div>
+            <div class="main-center-item" ng-repeat="item in items"><div class="main-center-item-img"> <img src="{{item.img}}" /></div><p>{{item.txt}}</p> </div>
+        </div>
+    </div>
+	</div>
+</div>
+
+<div class="main-right" data-velocity="0.1">
+    <div class="main-right-item">
+        <div class="main-right-item-left" onclick="Goto('/Home/DayHospital')">
+            <h3>дневной<br>стационар</h3><p>
+                Здесь вы можете<br>
+                узнать актуальную<br>
+                информацию<br>
+                о порядке госпитализации в<br>
+                «Золотое сердце»
+            </p>
+        </div>
+        <div class="main-right-item-right" onclick="Goto('/Home/Question')">
+            <img src="~/img/quest_main.png" /><h3>Ваши вопросы</h3><p>
+                Вы всегда можете задать<br>
+                вопрос нашему персоналу<br>
+                на сайте
+            </p>
+        </div>
+    </div>
+    <div class="main-right-item">
+        <div id="main-reception" class="main-right-item-big" onclick="Goto('/Home/Reception')">
+            <img src="~/img/main/edit.png" />
+            <h3>Онлайн запись на прием</h3>
+            <p>Вы можете записаться к врачам «Золотого сердца» через сайт</p>
+        </div>
+    </div>
+    <div class="main-right-item">
+        <div class="main-right-item-big-t" onclick="Goto('/Home/InformationStaff')">
+            <img src="~/img/main/doctor.jpg" />
+            <a href="#">Сведенья о работниках и их квалификации</a>
+        </div>
+    </div>
+    <div class="main-right-item">
+        <div class="main-right-item-left-t" onclick="Goto('/Home/Reviews')">
+            <img src="~/img/main/reviews.png" />
+            <h3>Ваши отзывы</h3>
+            <p>
+                Мы стремимся повысить качество<br>
+                нашей работы,  чтобы вы почувствовали<br>
+                нашу заботу о вашем здоровье,<br>
+                поэтому выбрали сервис Flamp,<br>
+                где вы можете без труда оставить<br>v
+                свой отзыв.
+            </p>
+        </div>
+        <div class="main-right-item-right-t" onclick="Goto('/Home/OMC')">
+            <img src="~/img/main/omc.png" />
+            <h3>ОМС</h3>
+        </div>
+    </div>
+    <div class="main-right-item">
+        <div class="main-right-item-big-h" onclick="Goto('/Home/OMC')">
+            <img src="~/img/main/document.png" />
+            <h3>Нормативная документация</h3>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+}

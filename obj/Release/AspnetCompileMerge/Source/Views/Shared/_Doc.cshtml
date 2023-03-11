@@ -1,0 +1,110 @@
+﻿@model ICollection<GoldenHeart.Models.User>
+@{ DateTime date = ViewBag.dateReception; }
+
+@foreach (var doc in Model)
+{
+    var j = 8;
+    var docName = doc.FirstName + " " + doc.Name.Substring(0, 1) + ". " + doc.LastName.Substring(0, 1) + ".";
+    var editAdmin = ViewBag.editAdmin;
+    <div class="appo-centr-down" doctor-name="@docName" doctor-id="@doc.Id">
+        <div class="appo-centr-doc"><p>@doc.Position</p><span>@docName</span></div>
+        @if (doc.BeginLeave.Date <= date.Date && date.Date <= doc.EndLeave.Date)
+        {
+            <div class="appo-centr-doc-right"><p>Врач находится в отпуске до @doc.EndLeave.ToString("dd.MM.yyyy")</p></div>
+        }
+        else if (doc.Hospital)
+        {
+            <div class="appo-centr-doc-right"><p>Врач находится на больничном</p></div>
+        }
+        else
+        {
+            <div class="appo-centr-fon" ng-controller="appoCtrl">
+                <div class="appo-centr-time">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        var flag = false;
+                        var minute = (i % 2 == 0) ? "30" : "00";
+
+                        if (doc.DeleteTime.Where(d => d.Time.Date == date.Date).Count() > 0)
+                        {
+                            foreach (var d in doc.DeleteTime.Where(d => d.Time.Date == date.Date))
+                            {
+                                if (d.Time.Hour == j && d.Time.Minute == Convert.ToInt32(minute))
+                                {
+                                    if (editAdmin == 1)
+                                    {
+                                        <button value="@j:@minute" class="appo-closed" onclick="SelectTime(this)">@j:@minute</button>
+                                    }
+                                    flag = true;
+                                }
+                            }
+                        }
+
+                        if (doc.DocReceptions.Where(r => r.DateReception.Date == date.Date).Count() > 0 && !flag)
+                        {
+                            foreach (var r in doc.DocReceptions.Where(r => r.DateReception.Date == date.Date))
+                            {
+                                if (r.DateReception.Hour == j && r.DateReception.Minute == Convert.ToInt32(minute))
+                                {
+                                    if (editAdmin == 1)
+                                    { <button value="@j:@minute" class="appo-select">@j:@minute</button> }
+                                    else
+                                    { <button value="@j:@minute" class="appo-closed">Занято</button> }
+                                    flag = true;
+                                }
+                            }
+                        }
+
+                        if (!flag)
+                        { <button value="@j:@minute" onclick="SelectTime(this)">@j:@minute</button> }
+
+                        if (i % 2 == 0) { ++j; }
+                    }
+                </div>
+                <div class="appo-centr-time-down">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        var flag = false;
+                        var minute = (i % 2 == 0) ? "30" : "00";
+
+                        if (doc.DeleteTime.Where(d => d.Time.Date == date.Date).Count() > 0)
+                        {
+                            foreach (var d in doc.DeleteTime.Where(d => d.Time.Date == date.Date))
+                            {
+                                if (d.Time.Hour == j && d.Time.Minute == Convert.ToInt32(minute))
+                                {
+                                    if (editAdmin == 1)
+                                    {
+                                        <button value="@j:@minute" class="appo-closed" onclick="SelectTime(this)">@j:@minute</button>
+                                    }
+                                    flag = true;
+                                }
+                            }
+                        }
+
+                        if (doc.DocReceptions.Where(r => r.DateReception.Date == date.Date).Count() > 0 && !flag)
+                        {
+                            foreach (var r in doc.DocReceptions.Where(r => r.DateReception.Date == date.Date))
+                            {
+                                if (r.DateReception.Hour == j && r.DateReception.Minute == Convert.ToInt32(minute))
+                                {
+                                    if (editAdmin == 1)
+                                    { <button value="@j:@minute" class="appo-select">@j:@minute</button> }
+                                    else
+                                    { <button value="@j:@minute" class="appo-closed">Занято</button> }
+                                    flag = true;
+                                }
+                            }
+                        }
+
+                        if (!flag)
+                        { <button value="@j:@minute" onclick="SelectTime(this)">@j:@minute</button> }
+
+                        if (i % 2 == 0) { ++j; }
+                    }
+                </div>
+            </div>
+        }
+
+    </div>
+}

@@ -1,0 +1,38 @@
+﻿@model ICollection<GoldenHeart.Models.User>
+
+@{
+    ViewBag.Title = "Персонал";
+    ViewBag.viewSubmenu = true;
+}
+
+<div class="search question-doc-two">
+    <div class="search-fon">
+        <div class="search-btn-fon"><span class="search-go"></span></div><input id="search" type="search" placeholder="Поиск врача ( Любая информация о враче )" />
+    </div>
+</div>
+<div class="admin-ls">
+    <a href="/Administrator/CreateDoc"><div class="admin-ls-personal-btn"><button>Добавить сотрудника</button></div></a>
+    <div class="admin-ls-personal">
+        <div id="staff" class="hospital-fon">
+            @Html.Partial("_Staff", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#search").keyup(function () {
+            var val = $(this).val();
+                $.ajax({
+                    url: "/Administrator/_Staff",
+                    method: "POST",
+                    data: {
+                        search: val
+                    },
+                    success: function (content) {
+                        $("#staff").html(content);
+                    }
+                });
+        })
+    </script>
+}

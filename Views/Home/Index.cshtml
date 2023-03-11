@@ -1,0 +1,34 @@
+﻿@using GoldenHeart.Models
+@{
+    ViewBag.Title = "Золотое сердце";
+}
+ <div class="main-center-black">
+<div class="main-center-gradient"></div>
+<div class="main-center">
+	
+    <div class="main-center-fon">
+        <div class="main-center-info" ng-controller="hospitalCtrl">
+            <div class="main-center-info-h"><h3>Поликлиническое<br>отделение</h3></div>
+            <div class="main-center-item" ng-repeat="item in items"><div class="main-center-item-img"> <img src="{{item.img}}" /></div><p>{{item.txt}}</p> </div>
+        </div>
+    </div>
+	</div>
+</div>
+ <div class="main-center-black">
+<div class="main-center-gradient"></div>
+<div class="main-down">
+	
+    <div class="main-center-fon">
+        <div class="main-center-info" ng-controller="hospisCtrl">
+            <div class="main-center-info-h"><h3>Хоспис</h3></div>
+            <div class="main-center-item" ng-repeat="item in items"><div class="main-center-item-img"> <img src="{{item.img}}" /></div><p>{{item.txt}}</p> </div>
+        </div>
+    </div>
+	</div>
+</div>
+
+
+
+@section Scripts {
+
+}

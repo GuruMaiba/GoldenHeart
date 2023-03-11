@@ -1,0 +1,64 @@
+﻿@model IEnumerable<GoldenHeart.Models.User>
+@{
+    ViewBag.Title = "Время приёма";
+    ViewBag.viewSubmenu = true;
+}
+
+<div class="admin-ls">
+    <div class="admin-ls-fon">
+        <div class="admin-ls-fon-command">
+            <div class="admin-ls-fon-command-item"><p>Дата:</p><input id="dataAdmin" type="text" name="dataAdmin" placeholder="@DateTime.Now.ToString("dd.MM.yyyy")" /></div>
+            <div class="admin-ls-fon-command-item">
+                <p>Врач:</p>
+                <select id="selectDocs">
+                    <option selected value="all">Все врачи</option>
+                    @foreach (var doc in Model)
+                    { <option value="@doc.Id">@doc.FirstName @doc.Name @doc.LastName</option> }
+                </select>
+            </div>
+        </div>
+        <div id="Docs">@Html.Partial("_Doc", Model)</div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $("#selectDocs").change(function () {
+            var select = $(this).val();
+
+            if (select != "all") {
+                $(".appo-centr-down").hide(200);
+                $(".appo-centr-down").each(function () {
+                    if ($(this).attr("doctor-id") == select) {
+                        $(this).show(200);
+                    }
+                });
+            } else {
+                $(".appo-centr-down").show(200);
+            }
+        });
+
+        $("#dataAdmin").change(function () {
+            var data = $(this).val();
+
+            if (data.length == 10) {
+                $.ajax({
+                    url: "/Home/_Doc",
+                    method: "POST",
+                    data: {
+                        docId: 0,
+                        serviceId: 0,
+                        day: 0,
+                        mounth: 0,
+                        Date: data,
+                        Type: "Admin"
+                    },
+                    success: function (content) {
+                        $("#Docs").html(content);
+                    }
+                });
+            }
+        });
+    </script>
+}

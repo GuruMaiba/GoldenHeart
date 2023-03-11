@@ -1,0 +1,39 @@
+﻿@model ICollection<GoldenHeart.Models.Patient>
+@{
+    ViewBag.Title = "База Пациентов";
+    ViewBag.viewSubmenu = true;
+}
+
+<div class="search question-doc-two">
+    <div class="search-fon">
+        <div class="search-btn-fon"><span class="search-go"></span></div><input id="search" type="search" placeholder="Поиск пациента ( Ф.И.О. или телефон пациента )" />
+    </div>
+</div>
+<div class="admin-ls" ng-controller="dbCtrl">
+    <div class="admin-db-fon">
+        <div class="admin-db-up">
+            <div class="admin-db-up-item" ng-repeat="item in up track by $index"><p>{{item}}</p><span ng-if="$index < 3"></span></div>
+        </div>
+        <div id="patients">
+            @Html.Partial("_Patients", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#search").keyup(function () {
+            var val = $(this).val();
+            $.ajax({
+                url: "/Administrator/_Patients",
+                method: "POST",
+                data: {
+                    search: val
+                },
+                success: function (content) {
+                    $("#patients").html(content);
+                }
+            });
+        });
+    </script>
+}

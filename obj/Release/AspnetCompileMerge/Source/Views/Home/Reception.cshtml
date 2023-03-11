@@ -1,0 +1,75 @@
+﻿@using GoldenHeart.Models
+@using System.Globalization
+@model ICollection<Service>
+@{
+    ViewBag.Title = "ЗАПИСЬ НА ПРИЕМ";
+    var now = DateTime.Now;
+    var j = 0;
+}
+
+<div class="appo" ng-controller="appoCtrl">
+    <div class="appo-fon">
+        <div class="appo-h"><h3>запись на прием</h3></div>
+        <div class="appo-centr">
+            <div class="appo-centr-left">
+                <div class="appo-centr-left-item"><p>Ф.И.О.:</p><input name="name" type="text" placeholder="Введите Ваше имя" /></div>
+				 <div class="appo-centr-left-item">  <p>Дата рождения:</p>
+                <input id="appobicdat" name="birthday" type="text" data-mask="00.00.0000" placeholder="Введите дату рождения"/></div>
+                
+            </div>
+            <div class="appo-centr-right">
+                <div class="appo-centr-left-item"><p>Контактный номер:</p><input name="phoneAppo" type="text" placeholder="Введите номер телефона" data-mask="8(000) 000-00-00" /></div>
+              
+            </div>
+            <div class="appo-centr-up-down">
+               <div class="appo-centr-left-item">
+                    <p>Услуга:</p>
+                    <select id="jojoba" name="service" >
+                        <option selected disabled value="Выберите услугу из списка">Выберите услугу из списка</option>
+                        @foreach (var service in Model)
+                        {
+                            <option value="@service.Id">@service.Name</option> }
+                        }
+                    </select>
+                </div>
+				  <div class="appo-centr-left-item">
+                    <p>Дата:</p>
+					  <div class="appo-centr-left-item-date">
+					  <select id="month_appo" name="month">
+                        <option selected disabled value="Месяц">Месяц</option>
+                        @for (int i = 0; i < 2; i++)
+                        { <option value="@(now.Month-1+i)">@now.AddMonths(i).ToString("MMMM", CultureInfo.GetCultureInfo("ru-RU"))</option> }
+                    </select>
+                    <select id="day_appo" name="day">
+                        <option selected disabled>День</option>
+                        @for (int i = now.Day; i <= DateTime.DaysInMonth(now.Year, now.Month); i++)
+                        {
+                            if (now.AddDays(j).DayOfWeek.ToString() != "Sunday" && now.AddDays(j).DayOfWeek.ToString() != "Saturday")
+                            {
+                                <option>@now.AddDays(j).Day</option> 
+                            }
+                            ++j;
+                        }
+                    </select>
+			</div>
+                </div>
+				
+            </div>
+        </div>
+
+        <div id="Docs"></div>
+
+        <div class="appo-centr-down-centr-fon">
+            <div class="appo-centr-down-down">
+                <p>Ваши Ф.И.О: фио, контактный номер: ТЕЛЕФОН</p>
+                <p>услуга: Услуга, врач: Гордеев И.М., дата: 260.05.2016, время: 12:00</p>
+            </div>
+        </div>
+    </div>
+    <div class="appo-h-down"><button ng-click="SendReception()" disabled>записаться</button> </div>
+</div>
+<div class="appo-centr-sms"><h3>Спасибо, Ваша запись принята!</h3></div>
+
+@section Scripts {
+
+}

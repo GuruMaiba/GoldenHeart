@@ -1,0 +1,101 @@
+﻿@using GoldenHeart.Models
+@using System.Globalization
+@model ICollection<Reception>
+@{
+    var culture = new CultureInfo("ru-RU");
+    ViewBag.Title = "Записи";
+    ViewBag.viewSubmenu = true;
+    var now = DateTime.Now;
+    var dateView = "";
+    var j = 0;
+}
+
+    <div class="entry">
+        <div class="entry-up">
+            <div class="entry-up-date">
+                <p>Дата:</p>
+                <select id="day_appo" name="day">
+                    <option selected disabled>День</option>
+                    @for (int i = now.Day; i <= DateTime.DaysInMonth(now.Year, now.Month); i++)
+                    {
+                        if (now.AddDays(j).DayOfWeek.ToString() != "Sunday" && now.AddDays(j).DayOfWeek.ToString() != "Saturday")
+                        { <option>@now.AddDays(j).Day</option> }
+                        ++j;
+                    }
+                </select>
+                <select id="month_appo" name="month">
+                    <option selected disabled value="Месяц">Месяц</option>
+                    @for (int i = 0; i < 2; i++)
+                    { <option value="@(now.Month-1+i)">@now.AddMonths(i).ToString("MMMM", culture)</option> }
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="entry-down">
+        @if (Model.Count() > 0)
+        {
+            foreach (var rec in Model)
+            {
+                var day = culture.DateTimeFormat.GetDayName(rec.DateReception.DayOfWeek);
+                day = day.Substring(0, 1).ToUpper() + day.Substring(1, day.Length - 1);
+                if (dateView != rec.DateReception.ToString("dd.MM.yyyy"))
+                {
+                    dateView = rec.DateReception.ToString("dd.MM.yyyy");
+                    <div id="date-@rec.DateReception.ToString("ddMM")" class="reception">
+                        <div class="entry-down-info">
+                            <h2>@rec.DateReception.ToString("dd.MM.yyyy")</h2>
+                            <h3>@day</h3>
+                        </div>
+                        <div class="table">
+                            <div class="thead">
+                                <p class="thead-time">Время</p><p class="thead-name">Ф.И.О</p><p class="thead-date">Дата рождения</p>
+                            </div>
+                            @foreach (var recs in Model)
+                            {
+                                if (recs.DateReception.ToString("dd.MM.yyyy") == dateView)
+                                {
+                                    <div class="tbody">
+                                        <p class="thead-time">@recs.DateReception.ToString("HH:mm")</p>
+                                        <p class="thead-name">@recs.PatientName</p>
+                                        <p class="thead-date">@recs.Birthday.ToString("dd.MM.yyyy")</p>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <h4>Записи отсутствуют</h4>
+        }
+        <h4 id="receptionNone" style="display: none;">На этот день записей нет</h4>
+    </div>
+
+@section Scripts{
+    <script>
+        $("#day_appo").change(function () {
+            var mounth = $("#month_appo").val();
+            var day = $(this).val();
+            if (day != null && mounth != null) {
+                $(".reception").hide(200);
+
+                parseInt(mounth);
+                parseInt(day);
+                ++mounth;
+
+                if (mounth < 10) { mounth = "0" + mounth; }
+                if (day < 10) { day = "0" + day; }
+
+                var element = $("#date-" + day + mounth);
+                if (element.length > 0) {
+                    $("#receptionNone").hide();
+                    element.show(200);
+                } else {
+                    $("#receptionNone").show();
+                }
+            }
+        });
+    </script>    
+}

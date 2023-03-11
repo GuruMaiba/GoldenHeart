@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "КОНТАКТЫ";
+}
+
+<div class="contcts">
+    <div class="contcts-fon">
+        <h3>Контакты</h3>
+        <div class="contcts-txt">
+            <div class="contcts-txt-item"><div class="contcts-txt-item-fon"><p>Адресс</p><span>Проспект Комсомольский 14/5</span></div></div>
+            <div class="contcts-txt-item"><div class="contcts-txt-item-fon contcts-txt-item-fon-n"><p>Телефон</p><span>8 (3462) 380-374<br>8 (3462) 505-707</span></div></div>
+            <div class="contcts-txt-item"><div class="contcts-txt-item-fon contcts-txt-item-fon-n"><p>Почта</p><span>zsmeste@mail.ru<br>zsmeste@mail.ru</span></div></div>
+        </div>
+    </div>
+</div>
+
+<div id="map" style="width: 100%; height: 50vh;"></div>
+
+<div class="adress"  ng-controller="adressCtrl">
+    <div class="adress-fon">
+        <div class="adress-item" ng-class="margin($index)" ng-repeat="item in items track by $index" coords="{{item.geo}} ">
+            <div class="adress-item-photo-fon">
+                <div class="adress-item-photo-b"><img src="{{item.photo}}"></div>
+                <div class="adress-item-photo-m"><img src="{{item.photo}}"></div>
+            </div>
+            
+            <div class="adress-item-txt">
+                <div class="adress-item-txt-adress"><span></span><p>{{item.street}}</p></div>
+                <div class="adress-item-txt-phone"><span></span><p>{{item.phone}}</p></div>
+                <div class="adress-item-txt-timejob"><span></span><p>Круглосуточно</p></div>
+                <div class="adress-item-txt-web"><span></span><p>{{item.web}}</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <script>
+        ymaps.ready(function () {
+            var arrCoords = [
+                [61.238337, 73.437975],
+                [61.249985, 73.440213],
+                [61.271060, 73.373199]
+            ];
+            console.log(arrCoords);
+            var myMap = new ymaps.Map("map", {
+                center: [arrCoords[0][0], arrCoords[0][1]],
+                zoom: 12,
+                controls: ['zoomControl', 'fullscreenControl']
+            }, {
+                searchControlProvider: 'yandex#search'
+                });
+            for (var i = 0; i < arrCoords.length; i++) {
+                var myPlacemark = new ymaps.Placemark([arrCoords[i][0], arrCoords[i][1]], null, {
+                    //// Опции.
+                    //// Необходимо указать данный тип макета.
+                    //iconLayout: 'default#image',
+                    //// Своё изображение иконки метки.
+                    //iconImageHref: '../../img/maps.png',
+                    //// Размеры метки.
+                    //iconImageSize: [40, 62],
+                    //// Смещение левого верхнего угла иконки относительно
+                    //// её "ножки" (точки привязки).
+                    //iconImageOffset: [-22, -70]
+                    //61.249985, 73.440213
+                });
+                myMap.geoObjects.add(myPlacemark);
+            }
+
+            $(".adress-item").click(function () {
+                var coords = $(this).attr("coords").split(",");
+                myMap.setCenter([coords[0], coords[1]], 15, {
+                    checkZoomRange: true
+                });
+            });
+
+        }); 
+    </script>
+}

@@ -1,0 +1,20 @@
+﻿@model ICollection<GoldenHeart.Models.Patient>
+@if (Model != null)
+{
+    var i = 1;
+    foreach (var patient in Model)
+    {
+        <div class="admin-db-down @if (i % 2 != 0) { <text>gray</text> }">
+            <div class="admin-db-down-item"><p>@patient.Name</p></div>
+            <div class="admin-db-down-item"><p>@patient.Birthday.ToString("dd.MM.yyyy")</p></div>
+            <div class="admin-db-down-item"><p>@patient.Phone</p></div>
+        </div>
+        ++i;
+    }
+}
+else
+{
+    <div class="admin-db-down gray">
+        <div class="admin-db-down-item"><p>Пациеты, не найдены...</p></div>
+    </div>
+}

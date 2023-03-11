@@ -1,0 +1,202 @@
+﻿@using GoldenHeart.Models
+@using System.Globalization
+@using System
+@model User
+@{
+    ViewBag.Title = Model.FirstName + " " + Model.Name + " " + Model.LastName;
+    ViewBag.viewSubmenu = true;
+    var UserList = new List<User>();
+    UserList.Add(Model);
+    var now = DateTime.Now;
+    var j = 0;
+    var hospital = (Model.Hospital) ? "hospital-fon-user-right-btn-close" : "";
+    var leave = (Model.BeginLeave.Date <= DateTime.Now && DateTime.Now.Date <= Model.EndLeave.Date) ? "hospital-fon-user-right-btn-close" : "";
+}
+
+@section Modal {
+    <div class="doctor-holiday" ng-controller="holidalCtrl">
+        <div class="sing-close" onclick="ClosedHoliday()"></div>
+        <div class="doctor-holiday-fon">
+            <h3>Отпуск</h3>
+            <input ng-model="from" type="text" data-mask="00.00.0000" placeholder="От" />
+            <input ng-model="do" type="text" data-mask="00.00.0000" placeholder="До" />
+            <button onclick="SetHoliday()" disabled>Отправить</button>
+        </div>
+    </div>
+}
+
+<div class="hospital-fon-user-fon" style="display:block;">
+    <div class="hospital-fon-user">
+        <div class="hospital-fon-user-left"><img src="~/img/avatars/@Model.Avatar" /></div>
+        <div class="hospital-fon-user-right">
+            <input id="docId" type="hidden" value="@Model.Id" />
+            <div class="hospital-fon-user-right-name"><h3>@Model.FirstName<br><span>@Model.Name @Model.LastName</span></h3> <p>@Model.Position</p></div>
+            <div class="hospital-fon-user-right-item"><p>@Html.DisplayNameFor(model => model.Birthday):<span>@Model.Birthday</span></p></div>
+            <div class="hospital-fon-user-right-item"><p>@Html.DisplayNameFor(model => model.Education):<span>@Model.Education</span></p></div>
+            <div class="hospital-fon-user-right-item"><p>@Html.DisplayNameFor(model => model.Certificate):<span>@Model.Certificate</span></p></div>
+            <div class="hospital-fon-user-right-item"><p>@Html.DisplayNameFor(model => model.InstitutionWorks):<span>@Model.InstitutionWorks</span></p></div>
+
+            @if ( (Model.VisiblePhone && !User.Identity.IsAuthenticated) || (User.Identity.IsAuthenticated && Model.Id == User.Identity.GetUserId<int>()) || User.Identity.GetUserRole() == "Admin" )
+            { 
+                <div class="hospital-fon-user-right-item">
+                    <p>@Html.DisplayNameFor(model => model.Phone):<span>@Model.Phone</span></p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (Model.VisiblePhone)
+                            { <p class="viewPhone">Скрыть от пациентов</p> }
+                        else
+                            { <p class="viewPhone">Показать пациентам</p> }
+                    }
+                </div> 
+            }
+
+            @if ((Model.VisibleEmail && !User.Identity.IsAuthenticated) || (User.Identity.IsAuthenticated && Model.Id == User.Identity.GetUserId<int>()) || User.Identity.GetUserRole() == "Admin" )
+            {
+                <div class="hospital-fon-user-right-item">
+                    <p>@Html.DisplayNameFor(model => model.Email):<span>@Model.Email</span></p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (Model.VisibleEmail)
+                            { <p class="viewEmail">Скрыть от пациентов</p> }
+                        else
+                            { <p class="viewEmail">Показать пациентам</p> }
+                    }
+                </div>
+            }
+            
+            @if (User.Identity.GetUserRole() == "Admin")
+            {
+                <div class="admin-edit-doctor-fon">
+                    <a href="/Administrator/EditDoc/@Model.Id"><div class="admin-edit-doctor-fon-up"><button>Редактировать профиль</button></div></a>
+                    <div class="admin-edit-doctor-fon-down"><button class="hospitalDoc @hospital">Больничный</button><button class="@leave" onclick="ShowHoliday()">Отпуск</button></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (User.Identity.GetUserRole() == "Doc" && Model.Id == User.Identity.GetUserId<int>())
+{
+    <div class="ls-center">
+
+        <div class="ls-center-fon">
+            <h2>Изменение пароля</h2>
+            <div class="ls-center-info">
+                <div class="ls-center-info-up">
+                    <div class="ls-center-info-up-item"><p>Старый пароль</p><input type="password" /></div>
+                    <div class="ls-center-info-up-item"><p>Новый пароль</p><input type="password" /></div>
+                    <div class="ls-center-info-up-item"><p>Повторите новый пароль</p><input type="password" /></div>
+                </div>
+                <div class="ls-center-info-down">
+                    <h2>Контактные данные</h2>
+                    <div class="ls-center-info-up-item"><p>Номер телефона</p><input type="text" value="@Model.Phone" /></div>
+                    <div class="ls-center-info-up-item"><p>E-mail</p><input type="email" value="@Model.Email" /></div>
+                </div>
+
+            </div>
+            <div class="ls-center-change">
+                <button disabled>Сохранить</button>
+                <span></span>
+                <p>Для внесения изменении в личную информацию обратитесь к администратору</p>
+            </div>
+        </div>
+
+    </div>
+}
+
+@if (!User.Identity.IsAuthenticated || (User.Identity.GetUserRole() == "Doc" && Model.Id != User.Identity.GetUserId<int>()))
+{
+    <div class="hospital-fon-user-appo">
+        <h3>Запись к врачу</h3>
+
+        <div class="appo-centr">
+            <div class="appo-centr-left">
+                <div class="appo-centr-left-item"><p>Ф.И.О.:</p><input name="name" type="text" placeholder="Введите Ваше имя" /></div>
+            </div>
+            <div class="appo-centr-right">
+                <div class="appo-centr-left-item"><p>Контактный номер:</p><input name="phoneAppo" type="text" placeholder="Введите номер телефона" /></div>
+                <div class="appo-centr-left-item">
+					<p>Дата рождения:</p>
+                <input id="appobicdat" name="birthday" type="text" data-mask="00.00.0000" placeholder="Введите дату рождения" />
+                   
+                </div>
+            </div>
+            <div class="appo-centr-up-down user">
+                 <p>Дата:</p>
+<div class="appo-centr-left-item-date">
+ <select id="month_appo" name="month">
+                        <option selected disabled value="Месяц">Месяц</option>
+                        @for (int i = 0; i < 2; i++)
+                        { 
+                            <option value="@(now.Month-1+i)">@now.AddMonths(i).ToString("MMMM", CultureInfo.GetCultureInfo("ru-RU"))</option> 
+                        }
+                    </select>
+                    <select id="day_appo" name="day">
+                        <option selected disabled>День</option>
+                        @for (int i = now.Day; i <= DateTime.DaysInMonth(now.Year, now.Month); i++)
+                        {
+                            if (now.AddDays(j).DayOfWeek.ToString() != "Sunday" && now.AddDays(j).DayOfWeek.ToString() != "Saturday")
+                            { <option>@now.AddDays(j).Day</option> }
+                            ++j;
+                        }
+                    </select>
+                   </div>
+            </div>
+        </div>
+
+        <div id="Docs">@Html.Partial("_Doc", UserList)</div>
+        <div class="appo-centr-down-centr-fon">
+            <div class="appo-centr-down-down">
+                <p>Ваши Ф.И.О: фио, контактный номер: ТЕЛЕФОН</p>
+                <p>услуга: Услуга, врач: Гордеев И.М., дата: 260.05.2016, время: 12:00</p>
+            </div>
+        </div>
+        <div class="appo-h-down"><button onclick="SendDoctor()" disabled>записаться</button> </div>
+    </div>
+    <div class="appo-centr-sms"><h3>Спасибо, Ваша запись принята!</h3></div>
+}
+
+@section Scripts {
+    <script>
+
+        $(".viewPhone").click(function () {
+            $.ajax({
+                url: "/Account/ViewPhone",
+                method: "POST",
+                data: { id: $("#docId").val() }
+            });
+            if ($(this).text() == "Скрыть от пациентов") {
+                $(this).text("Показать пациентам");
+            } else {
+                $(this).text("Скрыть от пациентов");
+            }
+        });
+
+        $(".viewEmail").click(function () {
+            $.ajax({
+                url: "/Account/ViewEmail",
+                method: "POST",
+                data: { id: $("#docId").val() }
+            });
+            if ($(this).text() == "Скрыть от пациентов") {
+                $(this).text("Показать пациентам");
+            } else {
+                $(this).text("Скрыть от пациентов");
+            }
+        });
+
+        $(".hospitalDoc").click(function () {
+            $.ajax({
+                url: "/Administrator/Hospital",
+                method: "POST",
+                data: { id: $("#docId").val() }
+            });
+            if ($(this).hasClass("hospital-fon-user-right-btn-close")) {
+                $(this).removeClass("hospital-fon-user-right-btn-close");
+            } else {
+                $(this).addClass("hospital-fon-user-right-btn-close");
+            }
+        });
+
+    </script>
+}

@@ -1,0 +1,19 @@
+﻿@model ICollection<GoldenHeart.Models.User>
+@{
+    ViewBag.Title = "Сведенья о персонале";
+}
+
+<div class="hospital">
+    <h2>Сведенья о персонале</h2>
+    <div class="hospital-fon">
+        @foreach (var doc in Model)
+        {
+            <a href="/Home/Doctor/@doc.Id">
+                <div class="hospital-item">
+                    <img src="~/img/avatars/@doc.Avatar" width="133" height="216" />
+                    <div class="hospital-item-txt"><p>@doc.FirstName @doc.Name @doc.LastName</p><p>@doc.Position</p></div>
+                </div>
+            </a>
+        }
+    </div>
+</div>

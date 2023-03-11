@@ -1,0 +1,144 @@
+﻿@using GoldenHeart.Models
+@model ICollection<Question>
+@{
+    ViewBag.Title = "Вопрос-Ответ";
+}
+
+@section Modal {
+    <div class="go-issues" ng-controller="issuesCtrl">
+        <div class="sing-close" onclick="ClosedIssues();"></div>
+        <div class="go-issues-fon">
+            <input id="QuestionId" type="hidden" name="QuestionId" />
+            <h3>задать вопрос</h3>
+            <div class="go-issues-item">
+                <p>Имя:</p>
+                <input placeholder="Как к вам обращаться?" ng-model="name" type="text" id="QuestionName"><!--<div class="go-issues-btns"><span class="go-issues-account"></span><span class="search-border"></span><span class="search-clear"></span></div>-->
+            </div>
+            <div class="go-issues-item">
+                <p>E-mail:</p>
+                <input placeholder="Как к вам обращаться?" ng-model="email" type="text" id="QuestionEmail"><!--<div class="go-issues-btns"><span class="go-issues-account"></span><span class="search-border"></span><span class="search-clear"></span></div>-->
+            </div>
+            <div class="go-issues-item">
+                <p>Ваш вопрос:</p>
+                <textarea ng-model="text" placeholder="Введите вопрос" id="QuestionText"></textarea>
+            </div>
+            <div class="go-issues-last">
+                <button ng-click="AddQuestion()" class="btnQuestion" disabled>Задать вопрос</button>
+            </div>
+        </div>
+    </div>   
+<div class="go-issues-info">
+    <div class="sing-close" onclick="ClosedIssuesInfo();"></div>
+    <div class="go-issues-info-fon">
+       <p>Юля, Спасибо за вопрос. Ответ появится в ленте после ответа на него.</p>
+            <p>Так же вы можете посмотреть ответ в личном кабинете</p>
+    </div>
+</div>
+}
+
+<div class="search question-doc-three">
+    <div class="search-fon">
+        <div class="search-btn-fon"><span class="search-go"></span></div><input id="serchQuestion" type="search" name="search" placeholder="Поиск ответа ( Ваше имя или часть вопроса )" />
+    </div>
+</div>
+
+<div class="issues">
+    <div class="issues-fon">
+        <h3>Прежде чем задать вопрос, проверьте, возможно на него уже имеется ответ.</h3>
+
+        <button class="issues-fon-btn" onclick="GoIssues()">задать вопрос</button>
+
+        @if (Model.Count > 0)
+        {
+            <div id="questionContent">
+                @Html.Partial("_Question", Model)
+            </div>
+        }
+        else
+        { <h4>Задайте вопрос</h4> }
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var view = @ViewBag.viewQuestionsCount;
+        var VCQ = @ViewBag.viewQuestionsCount;
+        $(document).ready(function () {
+
+            $(".btnQuestion").click(function () {
+                var name = $("#QuestionName").val();
+                var email = $("#QuestionEmail").val();
+                var text = $("#QuestionText").val();
+                
+                $.ajax({
+                    url: "/Home/Question",
+                    method: "POST",
+                    data: {
+                        Name: name,
+                        Email: email,
+                        Text: text
+                    },
+                    success: function () {
+                        $(".go-issues-last p").css("display", "block");
+                    },
+                    error: function () {
+                        alert("Технические неисправности, пожалуйста перезапустите страницу!");
+                    }
+                });
+            });
+
+            $("body").on("click", ".issues-next", function () {
+                var btn = $(this);
+                $.ajax({
+                    url: '/Home/_Question',
+                    data: {
+                        viewQuestionsCount: view,
+                        VCQ: VCQ
+                    },
+                    type: "POST",
+                    cache: false,
+                    success: function (content) {
+                        if (content != null || centent != "") {
+                            btn.remove();
+                            $("#questionContent").append(content);
+                            view += VCQ;
+                        } else {
+                            btn.remove();
+                        }
+                    },
+                    error: function () {
+                        alert("Технические неисправности, пожалуйста перезапустите страницу!");
+                    }
+                });
+            });
+
+            $("#serchQuestion").keyup(function (e) {
+                if ($(this).val().length > 3) {
+                    view = 0;
+                    $.ajax({
+                        url: "/Home/_Question",
+                        method: "POST",
+                        data: {
+                            viewQuestionsCount: view,
+                            VCQ: VCQ,
+                            Search: $(this).val()
+                        },
+                        success: function (content) {
+                            console.log(content);
+                            if (content != null && content != "") {
+                                $("#questionContent").html(content);
+                                view += VCQ;
+                            } else {
+                                $("#questionContent").html("Ни один вопрос не удовлетворяет поиску!");
+                            }
+                        },
+                        error: function () {
+                            alert("Технические неисправности, пожалуйста перезапустите страницу!");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
